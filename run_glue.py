@@ -343,12 +343,13 @@ def main():
     allow_name = ['query_proj', 'key_proj', 'value_proj', 'dense']
     block_name = ['LayerNorm', 'embedding']
     print(model)
+    """
     utils.substitute_layer_weights_quant_svd(model, allow_name, block_name,
                                              reduced_rank=args.reduced_rank,
                                              num_bits=args.num_bits,
                                              svd_init=args.svd_init,
                                              act_quant=args.act_quant)
-
+    """
     # Preprocessing the datasets
     if args.task_name is not None:
         sentence1_key, sentence2_key = task_to_keys[args.task_name]
