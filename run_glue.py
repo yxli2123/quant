@@ -420,8 +420,8 @@ def main():
             desc="Running tokenizer on dataset",
         )
 
-    train_dataset = processed_datasets["train"]
-    print("evalllllll")
+    # train_dataset = processed_datasets["train"]
+    train_dataset = processed_datasets["validation_matched" if args.task_name == "mnli" else "validation"]
     eval_dataset = processed_datasets["validation_matched" if args.task_name == "mnli" else "validation"]
 
     # Log a few random samples from the training set:
