@@ -406,7 +406,6 @@ def main():
         if "label" in examples:
             if label_to_id is not None:
                 # Map labels to IDs (not necessary for GLUE tasks)
-                print(examples)
                 result["labels"] = [label_to_id[l] for l in examples["label"]]
             else:
                 # In all cases, rename the column to labels because the model will expect that.
@@ -422,6 +421,7 @@ def main():
         )
 
     train_dataset = processed_datasets["train"]
+    print("evalllllll")
     eval_dataset = processed_datasets["validation_matched" if args.task_name == "mnli" else "validation"]
 
     # Log a few random samples from the training set:
