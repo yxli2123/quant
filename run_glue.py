@@ -346,11 +346,16 @@ def main():
         config=config,
         ignore_mismatched_sizes=args.ignore_mismatched_sizes,
     )
+    model_teacher = AutoModelForSequenceClassification.from_pretrained(
+        args.model_name_or_path,
+        from_tf=bool(".ckpt" in args.model_name_or_path),
+        config=config,
+        ignore_mismatched_sizes=args.ignore_mismatched_sizes,
+    )
     allow_name = ['query_proj', 'key_proj', 'value_proj', 'dense']
     block_name = ['LayerNorm', 'embedding', 'bias']
     #block_name += [f'.{i}.' for i in range(6)]
     print(model)
-    model_teacher = model.clone()
     # for name, param in model.named_parameters():
     #     if any(bn in name for bn in block_name):
     #         continue
