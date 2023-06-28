@@ -404,12 +404,12 @@ def main():
         result = tokenizer(*texts, padding=padding, max_length=args.max_length, truncation=True)
 
         if "label" in examples:
-            if label_to_id is not None:
-                # Map labels to IDs (not necessary for GLUE tasks)
-                result["labels"] = [label_to_id[l] for l in examples["label"]]
-            else:
-                # In all cases, rename the column to labels because the model will expect that.
-                result["labels"] = examples["label"]
+            # if label_to_id is not None:
+            #     # Map labels to IDs (not necessary for GLUE tasks)
+            #     result["labels"] = [label_to_id[l] for l in examples["label"]]
+            # else:
+            #     # In all cases, rename the column to labels because the model will expect that.
+            result["labels"] = examples["label"]
         return result
 
     with accelerator.main_process_first():
