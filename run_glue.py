@@ -342,14 +342,19 @@ def main():
     )
     allow_name = ['query_proj', 'key_proj', 'value_proj', 'dense']
     block_name = ['LayerNorm', 'embedding']
+    block_name += [f'.{i}.' for i in range(4)]
     print(model)
-    """
-    utils.substitute_layer_weights_quant_svd(model, allow_name, block_name,
-                                             reduced_rank=args.reduced_rank,
-                                             num_bits=args.num_bits,
-                                             svd_init=args.svd_init,
-                                             act_quant=args.act_quant)
-    """
+    for name, param in model.named_parameters():
+        if any(bn in name for bn in block_name):
+            continue
+        if any(an in name for an in allow_name):
+            quantized_weight = utils.quantize_weight(param, clip_val=None, num_bits=args.num_bits)
+            param.data = quantized_weight
+    # utils.substitute_layer_weights_quant_svd(model, allow_name, block_name,
+    #                                          reduced_rank=args.reduced_rank,
+    #                                          num_bits=args.num_bits,
+    #                                          svd_init=args.svd_init,
+    #                                          act_quant=args.act_quant)
     # Preprocessing the datasets
     if args.task_name is not None:
         sentence1_key, sentence2_key = task_to_keys[args.task_name]
