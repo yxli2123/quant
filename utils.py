@@ -316,6 +316,7 @@ def substitute_layer_weights_quant_svd(module,
                                        block_name=None,
                                        reduced_rank=32,
                                        svd_init=True,
+                                       clip_val=None,
                                        num_bits=4,
                                        act_quant=False):
     """
@@ -344,7 +345,7 @@ def substitute_layer_weights_quant_svd(module,
                 # Uniformly quantize the weight
                 weight = target_attr.weight.data.to('cuda')
                 quant_weight = quantize_weight(weight,
-                                               clip_val=None,
+                                               clip_val=clip_val,
                                                num_bits=num_bits,
                                                fake_quant=True)
                 residual_1 = weight - quant_weight
@@ -359,7 +360,7 @@ def substitute_layer_weights_quant_svd(module,
                 L = torch.zeros(H, reduced_rank, requires_grad=True)
                 R = torch.randn((reduced_rank, W), requires_grad=True)
                 quant_weight = quantize_weight(target_attr.weight,
-                                               clip_val=None,
+                                               clip_val=clip_val,
                                                num_bits=num_bits,
                                                fake_quant=True)
 
