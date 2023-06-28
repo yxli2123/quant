@@ -46,7 +46,7 @@ from transformers import (
 from transformers.utils import check_min_version, get_full_repo_name, send_example_telemetry
 from transformers.utils.versions import require_version
 import utils
-
+from torch.nn.functional import mse_loss
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 # check_min_version("4.31.0.dev0")
@@ -350,6 +350,7 @@ def main():
     block_name = ['LayerNorm', 'embedding', 'bias']
     #block_name += [f'.{i}.' for i in range(6)]
     print(model)
+    model_teacher = model.clone()
     # for name, param in model.named_parameters():
     #     if any(bn in name for bn in block_name):
     #         continue
@@ -463,11 +464,12 @@ def main():
     no_decay = ["bias", "LayerNorm.weight"]
     optimizer_grouped_parameters = [
         {
-            "params": [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+            "params": [p for n, p in model.named_parameters() if
+                       not any(nd in n for nd in no_decay) and 'quant' not in n],
             "weight_decay": args.weight_decay,
         },
         {
-            "params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)],
+            "params": [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay) and 'quant' not in n],
             "weight_decay": 0.0,
         },
     ]
@@ -571,13 +573,13 @@ def main():
             active_dataloader = train_dataloader
         for step, batch in enumerate(active_dataloader):
             outputs = model(**batch, output_hidden_states=True)
-            # layer_distill_loss = 0
-            #
-            # for i in range(25):
-            #     layer_distill_loss += loss_mse(outputs_with_hidden[2][i], teacher_outputs_with_hidden[2][i])
-            #
-            # loss += alpha_layer_distill_loss * layer_distill_loss
-            loss = outputs.loss
+
+            with torch.no_grad():
+                outputs_teacher = model_teacher(**batch, output_hidden_states=True)
+
+            loss = 0
+            for i in range(25):
+                loss += mse_loss(outputs[2][i], outputs_teacher[2][i])
 
             # We keep track of the loss at each epoch
             if args.with_tracking:
