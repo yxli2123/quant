@@ -378,7 +378,7 @@ def substitute_layer_weights_quant_svd(module,
         # do not continue to iterate when the module's name is in the block_name
         if not any(name in bn for bn in block_name):
             substitute_layer_weights_quant_svd(immediate_child_module, allow_name, block_name, reduced_rank,
-                                               svd_init, num_bits, act_quant)
+                                               svd_init, clip_val, num_bits, act_quant)
 
 
 
