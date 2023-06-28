@@ -222,7 +222,7 @@ class LinearQuantAct(nn.Linear):
     def quantize_activation(self, x):
         x_ = x.clone()
         mean, std = x.mean(), x.std()
-        min_val, max_val = mean - 1 * std, mean + 1 * std
+        min_val, max_val = mean - 3 * std, mean + 3 * std
         x_ = torch.where(x_ > min_val, x_, min_val)
         x_ = torch.where(x_ < max_val, x_, max_val)
 

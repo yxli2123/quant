@@ -8,6 +8,9 @@ python run_glue.py \
     --output_dir ./output/ \
     --seed 42 \
     --with_tracking \
-    --num_bits 16 \
+    --num_bits 8 \
     --reduced_rank 8 \
+    --act_quant \
+    --svd_init \
+    --clip_val 0.2 \
 
